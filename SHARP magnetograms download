@@ -1,0 +1,45 @@
+import drms
+import json
+import numpy as np
+import matplotlib.pylab as plt
+import matplotlib.ticker as mtick
+from datetime import datetime as dt_obj
+import urllib
+from astropy.io import fits
+from sunpy.visualization.colormaps import color_tables as ct
+from matplotlib.dates import *
+import matplotlib.image as mpimg
+import sunpy.map
+import sunpy.io
+from IPython.display import Image
+%matplotlib inline
+%config InlineBackend.figure_format='retina'
+import csv
+import os  # Import the os module
+
+c = drms.Client()
+
+import pandas as pd
+
+df = pd.read_csv("D:/My works/B task/model_input_target.csv")
+output_folder = 'D:/My works/B task/sharp_magnetogram1/'
+
+for i in range(len(df['LOS_fits_file'])):
+    row = df['LOS_fits_file'][i]
+    data = row[:18]+'['+row[19:23]+']['+row[24:28]+'.'+row[28:30]+'.'+row[30:32]+'_'+row[33:35]+':'+row[35:37]+':'+row[37:43]+']'
+    hmi_query_string = data
+    
+    keys, segments = c.query(hmi_query_string, key='T_REC, USFLUX, ERRVF', seg='Bp')
+    url = 'http://jsoc.stanford.edu' + segments.Bp[0]
+    
+    # Construct the output file path
+    output_file = os.path.join(output_folder, str(df['NOAA_NUM'][i]) + str(df['LOS_fits_file'][i][24:39]) + '.png')
+
+
+    # Check if the file already exists
+    if not os.path.exists(output_file):
+        photosphere_image = fits.open(url)
+        plt.imsave(output_file, photosphere_image[1].data, origin='lower', cmap='gray', vmin=-3000, vmax=3000)
+        print(f'Saved {output_file}')
+    else:
+        print(f'Skipping {output_file} (already exists)')
