@@ -1,0 +1,47 @@
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+
+flux = 'D:/My works/Solar Flare -- MagneticFreeEnergy/test/dataset/flux and hel.xlsx'
+
+df = pd.read_excel(flux)
+df.columns = df.columns.astype(str)
+
+plt.figure(figsize = (15,5))
+
+### plot 2D and total helicity ###
+plt.subplot(1,2,1)
+
+y = df['11429']*1e4
+x1 = df['11429_2']/1e24
+plt.scatter(x1,y, s=10, color="C2",label='2D MFE')
+
+y = df['11429']*1e4
+x2 = df['11429_toth']/5000
+plt.scatter(x2,y, s=10,color="C4", label='total helicity')
+
+plt.title("2D MFE and Total helicity")
+plt.xlabel("2D MFE (x$10^{25}$ erg) and total helicity (5x$10^3)")
+plt.ylabel("GOES Flare Flux (x$10^-4$ Watts $m^{-2}$)")
+plt.legend(loc='upper left', fontsize=8)
+
+plt.grid()
+
+### plot 3D and total helicity ###
+plt.subplot(1,2,2)
+
+y = df['11429']*1e4
+x = df['11429_3']/1e32
+plt.scatter(x,y, s=10,color='C0',label='3D MFE')
+
+y = df['11429']*1e4
+x2 = df['11429_toth']/5000
+plt.scatter(x2,y, s=10,color="C4", label='total helicity')
+plt.title("3D MFE and Total helicity")
+plt.xlabel("3D MFE (x$10^{32}$ erg) and total helicity (5x$10^3)")
+plt.ylabel("GOES Flare Flux (x$10^-4$ Watts $m^{-2}$)")
+plt.legend(loc='upper left', fontsize=8)
+
+plt.grid()
+
+plt.show()
